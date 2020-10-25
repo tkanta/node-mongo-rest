@@ -1,7 +1,7 @@
 const {MongoClient, ObjectID} = require('mongodb')
 
 const connectURL = "mongodb://127.0.0.1:27017"
-const databaseName = "task-manager"
+const databaseName = "task-manager-api"
 
 MongoClient.connect( connectURL, { useNewUrlParser : true, useUnifiedTopology: true}, (error, client) => {
     if(error){
