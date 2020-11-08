@@ -7,7 +7,7 @@ router.post('/users', async (req,res) => {
     
     const user = new User(req.body)
     try{
-        user.save()
+        await user.save()
         res.status(201).send(user)
     }catch(e){
         res.status(400).send(e)
@@ -64,20 +64,25 @@ router.patch('/users/:id', async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'age', 'email', 'password']
     const isvalidOperation = updates.every((u) => allowedUpdates.includes(u))
-
+    
     if(!isvalidOperation){
         return res.status(400).send({error: 'Invalid update!'})
     }
     try{
-
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators:true})
+         let user = await User.findById(req.params.id)
+         console.log(user)
+         updates.forEach((u) => user[u] = req.body[u])
+         console.log("after: ",user)
+         await  user.save()
+        //const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators:true})
 
         if(!user){
-            res.status(404).send('User not found')
+            return res.status(404).send('User not found')
         }
 
         res.send(user)
     }catch(e){
+        console.log(e)
         res.status(400).send(e)
     }
 })
@@ -98,5 +103,7 @@ router.delete('/users/:id', async (req, res) => {
         res.status(500).send(e)
     }
 })
+
+
 
 module.exports = router
