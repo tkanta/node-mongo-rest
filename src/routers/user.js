@@ -1,6 +1,6 @@
 const express = require('express')
 const User = require('../models/user')
-
+const auth = require('../middleware/auth')
 const router = express.Router()
 
 //create new user
@@ -35,6 +35,39 @@ router.post('/users/login', async (req, res) => {
     }
 })
 
+router.post('/users/logout', auth, async (req, res) => {
+    try{
+        debugger
+        console.log(req.token)
+        console.log(req.user.tokens)
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        console.log(req.user.tokens)
+        await req.user.save()
+
+        res.send('user logged out successfully!')
+    }catch(e){
+        res.status(500).send(e)
+    }
+})
+
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try{
+        debugger
+        req.user.tokens = []
+        await req.user.save()
+
+        res.send('user logged all out successfully!')
+    }catch(e){
+        res.status(500).send(e)
+    }
+})
+
+router.get('/users/me', auth, (req,res) => {
+    res.send(req.user)
+})
+
 router.get('/users', async(req, res) => {
 
     try{
@@ -43,11 +76,7 @@ router.get('/users', async(req, res) => {
     }catch(e){
         res.status(500).send(e)
     }
-    // User.find({}).then((users) => {
-    //     res.send(users)
-    // }).catch( (e) => {
-    //     res.status(400).send(e)
-    // })
+    
 })
 
 router.get('/users/:id', async(req, res) => {
