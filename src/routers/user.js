@@ -37,13 +37,9 @@ router.post('/users/login', async (req, res) => {
 
 router.post('/users/logout', auth, async (req, res) => {
     try{
-        debugger
-        console.log(req.token)
-        console.log(req.user.tokens)
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token
         })
-        console.log(req.user.tokens)
         await req.user.save()
 
         res.send('user logged out successfully!')
@@ -54,7 +50,6 @@ router.post('/users/logout', auth, async (req, res) => {
 
 router.post('/users/logoutAll', auth, async (req, res) => {
     try{
-        debugger
         req.user.tokens = []
         await req.user.save()
 
