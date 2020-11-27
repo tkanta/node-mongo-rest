@@ -50,6 +50,18 @@ const userSchema = new mongoose.Schema({
     ]
 })
 
+//call when JSON.stringify(user) is called during response is sent.
+userSchema.methods.toJSON = function () {
+    user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+    delete userObject.__v
+
+    return userObject
+}
+
 //instance method for generating token
 userSchema.methods.generateAuthToken = async function () {
     const user = this

@@ -13,6 +13,7 @@ app.listen(PORT, () => {
     console.log('Server is up on port ', PORT)
 })
 
+//---------------- json web token ---------
 // const jwt = require('jsonwebtoken')
 // const myFunction = () => {
 //     const token = jwt.sign({_id:'abc123'}, 'thisismynewcourse')
@@ -20,3 +21,15 @@ app.listen(PORT, () => {
 // }
 
 // myFunction()
+
+//--------------- JSON stringyfy ---------------
+
+// pet = {
+//     name: 'leo'
+// }
+
+// pet.toJSON = function () {
+//     return {name: 'prince'}
+// }
+
+// console.log(JSON.stringify(pet))
