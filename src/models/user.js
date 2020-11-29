@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Task = require('./task')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -50,7 +51,14 @@ const userSchema = new mongoose.Schema({
     ]
 })
 
-//call when JSON.stringify(user) is called during response is sent.
+//-- virtual mapping between user and Task --
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner' 
+})
+
+//-- called when JSON.stringify(user) is called during response is sent.--
 userSchema.methods.toJSON = function () {
     user = this
     const userObject = user.toObject()
@@ -62,7 +70,7 @@ userSchema.methods.toJSON = function () {
     return userObject
 }
 
-//instance method for generating token
+//-- instance method for generating token --
 userSchema.methods.generateAuthToken = async function () {
     const user = this
     const token = jwt.sign({_id: this._id.toString()}, 'thisismynewcourse')
@@ -71,7 +79,7 @@ userSchema.methods.generateAuthToken = async function () {
     return token
 }
 
-//static method for login
+//--static method for login--
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
     if(!user) throw new Error('Login failed')
@@ -80,7 +88,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
-//hash password before saving
+//--hash password before saving--
 userSchema.pre('save', async function(next) {
     const user = this
     
@@ -90,6 +98,15 @@ userSchema.pre('save', async function(next) {
     
     next()
 })
+
+// --- remove all Tasks when user deleted ----
+userSchema.pre('remove', async function(next) {
+     const user = this
+     await Task.deleteMany({owner: user._id})
+     next()
+})
+
+// --- User Model ------
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
