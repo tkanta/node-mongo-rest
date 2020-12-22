@@ -18,14 +18,6 @@ router.post('/users', async (req,res) => {
     }catch(e){
         res.status(400).send(e)
     }
-    // console.log(req.body)
-    // const user = new User(req.body)
-
-    // user.save().then(()=>{
-    //     res.status(201).send(user)
-    // }).catch((e) => {
-    //     res.status(400).send(e)
-    // })
     
 })
 
@@ -89,15 +81,7 @@ router.get('/users/:id', async(req, res) => {
     }catch(e){
         res.status(500).send(e)
     }
-    // console.log(req.params)
-    // User.findById(req.params.id).then((user) => {
-    //     if(!user){
-    //         res.status(404).send()
-    //     }
-    //     res.send(user)
-    // }).catch( (e) => {
-    //     res.status(500).send(e)
-    // })
+   
 })
 
 router.patch('/users/me', auth, async (req, res) => {
@@ -225,4 +209,5 @@ router.get('/users/:id/avatar', async(req, res) => {
 }, (error, req, res, next) => {
     res.status(400).send({error: error.message})
 })
+
 module.exports = router
